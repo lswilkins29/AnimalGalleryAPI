@@ -84,6 +84,38 @@ public class CatController {
         return new ResponseEntity<>(CatService.getCatsByAge(age), HttpStatus.OK);
     }
 
+    @GetMapping("/cats/search")
+    public ResponseEntity<?> searchCatsByName(@RequestParam(name = "name", required = false) String name) {
+    Object results = CatService.getCatsByName(name);
+    return ResponseEntity.ok(results);
+    }
+
+
+    @GetMapping("/cats/category/{category}")
+    public ResponseEntity<?> getByCategory(
+    @PathVariable String category,
+    @RequestParam(name = "value") String value) {
+        switch (category.toLowerCase()) {
+        case "breed":
+                return ResponseEntity.ok(CatService.getCatsByBreed(value));
+        case "age":
+            try {
+                Double ageVal = Double.valueOf(value);
+                    return ResponseEntity.ok(CatService.getCatsByAge(ageVal));
+                } catch (NumberFormatException ex) {
+                    return ResponseEntity.badRequest().body("Invalid age value: must be a number");
+                }
+        case "description":
+            return ResponseEntity.ok(CatService.getCatsByDescription(value));
+        case "name":
+            return ResponseEntity.ok(CatService.getCatsByName(value));
+        default:
+            return ResponseEntity
+            .badRequest()
+            .body("Unsupported category. Supported: name, breed, age, description");
+        }
+    }
+    
     /**
      * Endpoint to add a new cat
      *
