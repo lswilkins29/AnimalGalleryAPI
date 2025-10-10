@@ -1,8 +1,13 @@
 package com.example.CSC_340.Practice.API.Cat;
 
+import java.io.IOException;
+import java.io.File;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class CatService {
@@ -36,7 +41,10 @@ public class CatService {
      * @return List of cats with the specified name
      */
     public Object getCatsByName(String name) {
-        return catRepository.findByName(name);
+        if (name == null || name.isBlank()) {
+            return catRepository.findAll();
+        }
+        return catRepository.findByNameContainingIgnoreCase(name);
     }
 
     /**
@@ -98,4 +106,36 @@ public class CatService {
         catRepository.deleteById(catId);
     }
 
+    /**
+   * Method to write a cat object to a JSON file
+   *
+   * @param cat The cat object to write
+   */
+  public String writeJson(Cat cat) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      objectMapper.writeValue(new File("cats.json"), cat);
+      return "Cat written to JSON file successfully";
+    } catch (IOException e) {
+      e.printStackTrace();
+      return "Error writing cat to JSON file";
+    }
+
+  }
+
+  /**
+   * Method to read a cat object from a JSON file
+   *
+   * @return The cat object read from the JSON file
+   */
+  public Object readJson() {
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      return objectMapper.readValue(new File("cats.json"), Cat.class);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
+
+  }
 }

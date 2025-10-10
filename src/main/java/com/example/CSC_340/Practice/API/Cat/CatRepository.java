@@ -11,6 +11,9 @@ public interface CatRepository extends JpaRepository<Cat, Long> {
 
     List<Cat> findByName(String name);
 
+    // Find cats whose name contains the given string (case-insensitive)
+    List<Cat> findByNameContainingIgnoreCase(String name);
+
     @Query("SELECT c FROM Cat c WHERE c.age = ?1")
     List<Cat> findByAge(Double age);
 

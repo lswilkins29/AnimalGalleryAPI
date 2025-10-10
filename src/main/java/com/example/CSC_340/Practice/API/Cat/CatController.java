@@ -42,16 +42,12 @@ public class CatController {
     /**
      * Endpoint to get cats by name
      *
-     * @param name The name of the cat to search for
-     * @return List of cats with the specified name
+     * @param name Optional name substring to search for (contains, case-insensitive). If omitted returns all cats.
+     * @return List of cats matching the criteria
      */
     @GetMapping("/cats/name")
-    public Object getCatsByName(@RequestParam String key) {
-        if (key != null) {
-            return CatService.getCatsByName(key);
-        } else {
-            return CatService.getAllCats();
-        }
+    public Object getCatsByName(@RequestParam(name = "name", required = false) String name) {
+        return CatService.getCatsByName(name);
 
     }
 
@@ -123,4 +119,26 @@ public class CatController {
         CatService.deleteCat(id);
         return CatService.getAllCats();
     }
+    /**
+   * Endpoint to write a student to a JSON file
+   *
+   * @param student The student to write
+   * @return An empty string indicating success
+   */
+  @PostMapping("/cats/writeFile")
+  public Object writeJson(@RequestBody Cat cat) {
+    return CatService.writeJson(cat);
+  }
+
+  /**
+   * Endpoint to read a JSON file and return its contents
+   *    
+   * @return The contents of the JSON file
+   */
+  @GetMapping("/cats/readFile")
+  public Object readJson() {
+    return CatService.readJson();
+
+  }
+
 }
