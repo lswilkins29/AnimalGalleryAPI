@@ -3,16 +3,15 @@ package com.example.CSC_340.Practice.API.Cat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-//@RestController
 @Controller // MVC Controller
 public class CatController {
 
@@ -161,11 +160,11 @@ public class CatController {
      * @param cat The cat to add
      * @return List of all cats
      */
-    @PostMapping("/cats")
-    public Object addCat(@RequestBody Cat cat) {
-    Cat newCat = CatService.addCat(cat);
-    return "redirect:/cats/" + newCat.getId();
-  }
+        @PostMapping("/cats")
+        public Object addCat(@RequestBody Cat cat) {
+        Cat newCat = CatService.addCat(cat);
+        return "redirect:/cats/" + newCat.getCatId();
+    }
 
   /**
    * Endpoint to show the update form for a cat
@@ -190,11 +189,11 @@ public class CatController {
    * @return The updated cat
    */
   // @PutMapping("/cats/{id}")
-  @PostMapping("/cats/update/{id}")
-  public Object updateCat(@PathVariable Long id, Cat cat) {
-    CatService.updateCat(id, cat);
-    return "redirect:/cats/" + id;
-  }
+    @PostMapping("/cats/update/{id}")
+    public Object handleUpdateForm(@PathVariable Long id, Cat cat) {
+        CatService.updateCat(id, cat);
+        return "redirect:/cats/" + id;
+    }
 
 
 

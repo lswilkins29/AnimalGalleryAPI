@@ -1,14 +1,10 @@
 package com.example.CSC_340.Practice.API.Cat;
 
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.multipart.MultipartFile;
+
 
 @Service
 public class CatService {
@@ -108,35 +104,37 @@ public class CatService {
     }
 
     /**
-   * Method to write a cat object to a JSON file
-   *
-   * @param cat The cat object to write
-   */
-  public String writeJson(Cat cat) {
-    ObjectMapper objectMapper = new ObjectMapper();
-    try {
-      objectMapper.writeValue(new File("cats.json"), cat);
-      return "Cat written to JSON file successfully";
-    } catch (IOException e) {
-      e.printStackTrace();
-      return "Error writing cat to JSON file";
+     * Write a Cat object to a local JSON file (cat.json)
+     *
+     * @param cat the cat to write
+     * @return empty string on success, error message on failure
+     */
+    public Object writeJson(Cat cat) {
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            java.io.File file = new java.io.File("cat.json");
+            mapper.writeValue(file, cat);
+            return "";
+        } catch (java.io.IOException ex) {
+            ex.printStackTrace();
+            return "error: " + ex.getMessage();
+        }
     }
 
-  }
-
-  /**
-   * Method to read a cat object from a JSON file
-   *
-   * @return The cat object read from the JSON file
-   */
-  public Object readJson() {
-    ObjectMapper objectMapper = new ObjectMapper();
-    try {
-      return objectMapper.readValue(new File("cats.json"), Cat.class);
-    } catch (IOException e) {
-      e.printStackTrace();
-      return null;
+    /**
+     * Read a Cat object from the local JSON file (cat.json)
+     *
+     * @return Cat object on success or null on failure
+     */
+    public Object readJson() {
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            java.io.File file = new java.io.File("cat.json");
+            Cat cat = mapper.readValue(file, Cat.class);
+            return cat;
+        } catch (java.io.IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
-
-  }
 }
