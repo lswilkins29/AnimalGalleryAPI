@@ -3,16 +3,16 @@ package com.example.CSC_340.Practice.API.Cat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller // MVC Controller
 public class CatController {
 
     @Autowired
@@ -23,9 +23,12 @@ public class CatController {
      *
      * @return List of all cats
      */
-    @GetMapping("/cats")
-    public Object getAllCats() {
-        return CatService.getAllCats();
+    @GetMapping({"/cats", "/cats/"})
+    public Object getAllCats(Model model) {
+        //return CatService.getAllCats();
+        model.addAttribute("catsList", CatService.getAllCats());
+        model.addAttribute("title", "All Cats");
+        return "cats-list"; // view name
     }
 
     /**
@@ -35,8 +38,11 @@ public class CatController {
      * @return The cat with the specified ID
      */
     @GetMapping("/cats/{id}")
-    public Cat getCatById(@PathVariable long id) {
-        return CatService.getCatById(id);
+    public String getCatById(@PathVariable long id, Model model) {
+        //return CatService.getCatById(id);
+        model.addAttribute("cat", CatService.getCatById(id));
+        model.addAttribute("title", "Cat #: " + id);
+        return "cat-details";
     }
 
     /**
@@ -46,10 +52,17 @@ public class CatController {
      * @return List of cats matching the criteria
      */
     @GetMapping("/cats/name")
-    public Object getCatsByName(@RequestParam(name = "name", required = false) String name) {
-        return CatService.getCatsByName(name);
-
+    public Object getCatsByName(@RequestParam String key, Model model) {
+        if (key != null) {
+            model.addAttribute("catsList", CatService.getCatsByName(key));
+            model.addAttribute("title", "Cats By Name: " + key);
+            return "cats-list";
+        } else {
+         return "redirect:/cats/";
+        }
     }
+
+    
 
     /**
      * Endpoint to get cats by description
@@ -58,8 +71,11 @@ public class CatController {
      * @return List of cats with the specified description
      */
     @GetMapping("/cats/description/{description}")
-    public Object getCatsByDescription(@PathVariable String description) {
-        return CatService.getCatsByDescription(description);
+    public Object getCatsByDescription(@PathVariable String description, Model model) {
+        //return CatService.getCatsByDescription(description);
+        model.addAttribute("catsList", CatService.getCatsByDescription(description));
+        model.addAttribute("title", "Cats By Description: " + description);
+        return "cats-list";
     }
 
     /**
@@ -69,9 +85,31 @@ public class CatController {
      * @return List of cats with the specified breed
      */
     @GetMapping("/cats/breed")
-    public Object getCatsByBreed(@RequestParam(name = "breed", defaultValue = "Domestic") String breed) {
-        return new ResponseEntity<>(CatService.getCatsByBreed(breed), HttpStatus.OK);
+    public Object getCatsByBreed(@RequestParam(name = "breed", defaultValue = "Domestic") String breed, Model model) {
+        //return new ResponseEntity<>(CatService.getCatsByBreed(breed), HttpStatus.OK);
+        model.addAttribute("catsList", CatService.getCatsByBreed(breed));
+        model.addAttribute("title", "Cats By Breed: " + breed);
+        return "cats-list";
     }
+
+
+    /**
+    * Endpoint to show the create form for a new cat
+    *
+    * @param model The model to add attributes to
+    * @return The view name for the create form
+    */
+    @GetMapping("/cats/createForm")
+    public Object showCreateForm(Model model) {
+        Cat cat = new Cat();
+        model.addAttribute("cat", cat);
+        model.addAttribute("title", "Create New Cat");
+        return "cats-create";
+    }
+
+
+
+
 
     /**
      * Endpoint to get cats by age
@@ -122,10 +160,50 @@ public class CatController {
      * @param cat The cat to add
      * @return List of all cats
      */
-    @PostMapping("/cats")
-    public Object addCat(@RequestBody Cat cat) {
-        return CatService.addCat(cat);
+        // Handles JSON POSTs (API clients)
+        @PostMapping(value = "/cats", consumes = "application/json")
+        public Object addCatJson(@RequestBody Cat cat) {
+            Cat newCat = CatService.addCat(cat);
+            return "redirect:/cats/" + newCat.getCatId();
+        }
+
+        // Handles form POSTs (browser forms)
+        @PostMapping(value = "/cats", consumes = "application/x-www-form-urlencoded")
+        public Object addCatForm(Cat cat) {
+            Cat newCat = CatService.addCat(cat);
+            return "redirect:/cats/" + newCat.getCatId();
+        }
+
+  /**
+   * Endpoint to show the update form for a cat
+   *
+   * @param id    The ID of the cat to update
+   * @param model The model to add attributes to
+   * @return The view name for the update form
+   */
+  @GetMapping("/cats/updateForm/{id}")
+  public Object showUpdateForm(@PathVariable Long id, Model model) {
+    Cat cat = CatService.getCatById(id);
+    model.addAttribute("cat", cat);
+    model.addAttribute("title", "Update Cat: " + id);
+    return "cats-update";
+  }
+
+  /**
+   * Endpoint to update a cat
+   *
+   * @param id  The ID of the cat to update
+   * @param cat The updated cat information
+   * @return The updated cat
+   */
+  // @PutMapping("/cats/{id}")
+    @PostMapping("/cats/update/{id}")
+    public Object handleUpdateForm(@PathVariable Long id, Cat cat) {
+        CatService.updateCat(id, cat);
+        return "redirect:/cats/" + id;
     }
+
+
 
     /**
      * Endpoint to update a cat
@@ -141,20 +219,25 @@ public class CatController {
     }
 
     /**
-     * Endpoint to delete a cat
-     *
-     * @param id The ID of the cat to delete
-     * @return List of all cats
-     */
-    @DeleteMapping("/cats/{id}")
-    public Object deleteCat(@PathVariable Long id) {
-        CatService.deleteCat(id);
-        return CatService.getAllCats();
-    }
-    /**
-   * Endpoint to write a student to a JSON file
+   * Endpoint to delete a cat
    *
-   * @param student The student to write
+   * @param id The ID of the cat to delete
+   * @return List of all cats
+   */
+  // @DeleteMapping("/cats/{id}")
+  @GetMapping("/cats/delete/{id}")
+  public Object deleteCat(@PathVariable Long id) {
+    CatService.deleteCat(id);
+    return "redirect:/cats";
+  }
+
+
+
+
+    /**
+   * Endpoint to write a cat to a JSON file
+   *
+   * @param cat The cat to write
    * @return An empty string indicating success
    */
   @PostMapping("/cats/writeFile")

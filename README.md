@@ -4,7 +4,10 @@ Simple CRUD API for Cat Objects with JPA (Hibernate)
 ### Version
 1.0.0
 
-### Video Demo Link
+### Video Demo Link For MVC
+https://uncg-my.sharepoint.com/:v:/g/personal/lswilkins_uncg_edu/EbbbgzrpjCRLp33adtYYUesBK2P3UOLlqjbjO4Ef05q27A?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=qrePja
+
+### Video Demo Link For API
 https://uncg-my.sharepoint.com/:v:/g/personal/lswilkins_uncg_edu/EVPAA7ogE19LtEl1205Cp1wBmDcj6bJ9QW2Ojgz9LhUj3g?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=ZqtBoJ
 
 ## Installation
