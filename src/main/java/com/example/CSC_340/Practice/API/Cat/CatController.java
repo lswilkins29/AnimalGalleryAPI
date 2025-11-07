@@ -160,11 +160,19 @@ public class CatController {
      * @param cat The cat to add
      * @return List of all cats
      */
-        @PostMapping("/cats")
-        public Object addCat(@RequestBody Cat cat) {
-        Cat newCat = CatService.addCat(cat);
-        return "redirect:/cats/" + newCat.getCatId();
-    }
+        // Handles JSON POSTs (API clients)
+        @PostMapping(value = "/cats", consumes = "application/json")
+        public Object addCatJson(@RequestBody Cat cat) {
+            Cat newCat = CatService.addCat(cat);
+            return "redirect:/cats/" + newCat.getCatId();
+        }
+
+        // Handles form POSTs (browser forms)
+        @PostMapping(value = "/cats", consumes = "application/x-www-form-urlencoded")
+        public Object addCatForm(Cat cat) {
+            Cat newCat = CatService.addCat(cat);
+            return "redirect:/cats/" + newCat.getCatId();
+        }
 
   /**
    * Endpoint to show the update form for a cat
